@@ -175,9 +175,33 @@
     // Відображення карток
     function renderProducts(items) {
         const grid = document.getElementById('grid');
-        if (!items || items.length === 0) {
-            grid.innerHTML = "<p>Товарів не знайдено в цій категорії.</p>";
-            return;
+    if (!items || items.length === 0) {
+        grid.innerHTML = "<p>Товарів не знайдено</p>";
+        return;
+    }
+
+    grid.innerHTML = items.map(i => {
+        // Шукаємо дані в різних варіантах назв колонок
+        const name = i.Name || i.name || i['Назва'] || "Без назви";
+        const price = i.Price || i.price || i['Ціна'] || "0";
+        const img = i.ImageURL || i.image || i['Фото'] || "";
+        const sizes = i.Sizes || i.size || i['Розміри'] || "";
+        const desc = i.Description || i.description || i['Опис'] || "Опис скоро з'явиться...";
+
+        // Очищаємо текст від символів, які ламають мобільні браузери
+        const safeName = name.replace(/'/g, "\\'");
+        const safeDesc = desc.replace(/'/g, "\\'").replace(/\n/g, "<br>");
+
+        return `
+            <div class="card" onclick="showPopup('${safeName}', '${price}', '${sizes}', '${img}', '${safeDesc}')">
+                <img src="${img}" alt="${name}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Photo'">
+                <div class="card-info">
+                    <h3>${name}</h3>
+                    <div class="price">${price} грн</div>
+                </div>
+            </div>
+        `;
+    }).join('');
         }
 
         grid.innerHTML = items.map(i => {
@@ -263,3 +287,4 @@
 </body>
 
 </html>
+
