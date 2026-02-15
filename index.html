@@ -4,220 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="qHhHFioU0084o1SP09ra8VYgvHsqOKGF3FnOqUUEnjo" />
-    <title>Minimalist Beige Store</title>
+    
+    <title>Minimalist Store & Cart</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --beige-bg: #fdfaf5;
-            --beige-card: #ffffff;
-            --accent: #c4a484;
-            --text: #4a4a4a;
-        }
+        :root { --beige-bg: #fdfaf5; --accent: #c4a484; --text: #4a4a4a; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--beige-bg); color: var(--text); margin: 0; padding: 0; }
+        
+        header { background: white; padding: 15px; text-align: center; border-bottom: 1px solid #eee; sticky: top; z-index: 100; }
+        .search-container { margin: 15px auto; max-width: 600px; padding: 0 20px; }
+        #searchInput { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 25px; outline: none; box-sizing: border-box; }
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--beige-bg);
-            color: var(--text);
-            margin: 0; padding: 0;
-            line-height: 1.6;
-        }
+        .nav-buttons { margin-bottom: 10px; }
+        nav button { background: none; border: none; margin: 5px 10px; cursor: pointer; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .container { max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 0 20px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 320px; object-fit: cover; }
+        .card-info { padding: 15px; text-align: center; }
+        .price { font-weight: 600; font-size: 18px; margin-top: 5px; }
 
-        /* Шапка */
-        header {
-            background: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-            position: sticky; top: 0; z-index: 100;
-        }
+        /* Кошик кнопка */
+        .cart-icon { position: fixed; bottom: 20px; right: 20px; background: var(--accent); color: white; padding: 15px 20px; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 999; }
 
-        header h1 {
-            letter-spacing: 5px;
-            font-weight: 300;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
+        /* Модальні вікна */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; overflow-y: auto; }
+        .modal-content { background: white; width: 90%; max-width: 500px; border-radius: 15px; padding: 25px; position: relative; margin: 20px; }
+        .close { position: absolute; top: 15px; right: 20px; font-size: 25px; cursor: pointer; }
+        
+        #m-img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+        .m-desc { font-size: 14px; color: #666; margin: 15px 0; line-height: 1.5; }
+        
+        select, input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd; }
+        .btn { background: var(--accent); color: white; border: none; padding: 12px; width: 100%; border-radius: 5px; cursor: pointer; font-weight: 600; text-transform: uppercase; }
 
-        nav button {
-            background: none; border: none; margin: 5px 12px;
-            cursor: pointer; font-weight: 600; color: var(--text);
-            text-transform: uppercase; font-size: 11px;
-            letter-spacing: 1px; transition: 0.3s;
-        }
-
-        nav button:hover { color: var(--accent); }
-
-        /* Сітка товарів */
-        .container {
-            max-width: 1200px; margin: 30px auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px; padding: 0 20px;
-        }
-
-        .card {
-            background: var(--beige-card); border-radius: 15px; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-            transition: 0.3s; cursor: pointer; text-align: center;
-        }
-
-        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
-        .card img { width: 100%; height: 380px; object-fit: cover; background: #f9f9f9; }
-        .card-info { padding: 15px; }
-        .card-info h3 { margin: 10px 0; font-size: 16px; font-weight: 400; }
-        .price { font-weight: 600; color: #333; font-size: 18px; }
-
-        /* Модальне вікно */
-        #modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0,0,0,0.7);
-            justify-content: center; align-items: center; z-index: 1000;
-            padding: 20px; box-sizing: border-box;
-        }
-
-        .modal-content {
-            background: white; width: 100%; max-width: 900px;
-            display: flex; flex-wrap: wrap; border-radius: 20px;
-            overflow: hidden; position: relative; max-height: 90vh;
-        }
-
-        .modal-close {
-            position: absolute; top: 15px; right: 20px;
-            font-size: 30px; cursor: pointer; z-index: 10; color: #333;
-        }
-
-        .m-img { flex: 1; min-width: 300px; background: #f5f5f5; }
-        .m-img img { width: 100%; height: 100%; object-fit: cover; max-height: 500px; }
-
-        .m-info { flex: 1; min-width: 300px; padding: 40px; overflow-y: auto; box-sizing: border-box; }
-        .m-desc { color: #777; line-height: 1.6; margin: 20px 0; font-size: 14px; }
-
-        label { font-size: 12px; font-weight: 600; text-transform: uppercase; display: block; margin-top: 15px; }
-
-        input, select {
-            width: 100%; padding: 12px; margin: 8px 0;
-            border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
-        }
-
-        .btn-order {
-            background: var(--accent); color: white; border: none;
-            padding: 16px; width: 100%; border-radius: 8px;
-            font-weight: 600; cursor: pointer; margin-top: 15px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* Адаптивність */
-        @media (max-width: 768px) {
-            .modal-content { flex-direction: column; overflow-y: auto; }
-            .m-img { height: 300px; min-width: 100%; }
-            .m-info { padding: 25px; min-width: 100%; }
-        }
+        /* Стиль кошика */
+        .cart-item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Minimal Store</h1>
-    <nav>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Пошук товарів..." onkeyup="searchProducts()">
+    </div>
+    <div class="nav-buttons">
         <button onclick="renderProducts(allProducts)">Всі</button>
         <button onclick="filterItems('Жіночий одяг')">Жіночий</button>
         <button onclick="filterItems('Чоловічий одяг')">Чоловічий</button>
-        <button onclick="filterItems('Кросівки')">Кросівки</button>
-        <button onclick="filterItems('Знижка')" style="color: #b22222;">Знижки %</button>
-    </nav>
+    </div>
 </header>
 
-<div class="container" id="grid">Завантаження каталогу...</div>
+<div class="container" id="grid">Завантаження...</div>
 
-<div id="modal" onclick="if(event.target == this) closeModal()">
+<div class="cart-icon" onclick="openCart()">🛒 Кошик (<span id="cartCount">0</span>)</div>
+
+<div id="productModal" class="modal" onclick="if(event.target==this) closeModal('productModal')">
     <div class="modal-content">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <div class="m-img"><img id="m-src" src=""></div>
-        <div class="m-info">
-            <h2 id="m-name" style="margin-top:0;"></h2>
-            <div class="price" id="m-price" style="font-size: 24px;"></div>
-            <div class="m-desc" id="m-desc"></div>
-            
-            <label>Розмір:</label>
-            <select id="m-size"></select>
+        <span class="close" onclick="closeModal('productModal')">&times;</span>
+        <img id="m-img" src="">
+        <h2 id="m-name"></h2>
+        <div class="price" id="m-price"></div>
+        <div class="m-desc" id="m-desc"></div>
+        <label>Оберіть розмір:</label>
+        <select id="m-size"></select>
+        <button class="btn" onclick="addToCart()">Додати у кошик</button>
+    </div>
+</div>
 
-            <label>Доставка:</label>
-            <select id="m-delivery">
-                <option value="Нова Пошта">Нова Пошта</option>
-                <option value="Укрпошта">Укрпошта</option>
-            </select>
-
-            <label>Ваш телефон:</label>
-            <input type="tel" id="m-phone" placeholder="099 123 45 67">
-            <button class="btn-order" onclick="submitOrder()">Замовити</button>
-        </div>
+<div id="cartModal" class="modal" onclick="if(event.target==this) closeModal('cartModal')">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('cartModal')">&times;</span>
+        <h2>Ваш кошик</h2>
+        <div id="cartItems"></div>
+        <hr>
+        <h3>Разом: <span id="cartTotal">0</span> грн</h3>
+        <input type="tel" id="userPhone" placeholder="Ваш номер телефону">
+        <button class="btn" onclick="checkout()">Оформити замовлення</button>
     </div>
 </div>
 
 <script>
-    // 1. ВСТАВТЕ ВАШЕ ПОСИЛАННЯ ТУТ
     const API = 'https://script.google.com/macros/s/AKfycbwYwq2xdyMS_kx5rkKv2MUA8Fsh8n52MaS20mPlkmJYlmPbEXs5ZWkK0ZyGCDSMkorS/exec';
     let allProducts = [];
+    let cart = [];
+    let currentProduct = null;
 
-    // Завантаження даних
     async function load() {
         try {
             const r = await fetch(API);
             const data = await r.json();
-            // Фільтруємо, щоб не було порожніх карток
-            allProducts = data.filter(i => i.Name || i.name || i['Назва']); 
+            allProducts = data.filter(i => i.Name || i.name || i['Назва']);
             renderProducts(allProducts);
         } catch (e) {
-            document.getElementById('grid').innerText = "Не вдалося завантажити товари. Перевірте доступ до таблиці.";
-            console.error(e);
+            document.getElementById('grid').innerText = "Помилка завантаження.";
         }
     }
 
-    // Відображення карток
     function renderProducts(items) {
         const grid = document.getElementById('grid');
-    if (!items || items.length === 0) {
-        grid.innerHTML = "<p>Товарів не знайдено</p>";
-        return;
-    }
-
-    grid.innerHTML = items.map(i => {
-        // Шукаємо дані в різних варіантах назв колонок
-        const name = i.Name || i.name || i['Назва'] || "Без назви";
-        const price = i.Price || i.price || i['Ціна'] || "0";
-        const img = i.ImageURL || i.image || i['Фото'] || "";
-        const sizes = i.Sizes || i.size || i['Розміри'] || "";
-        const desc = i.Description || i.description || i['Опис'] || "Опис скоро з'явиться...";
-
-        // Очищаємо текст від символів, які ламають мобільні браузери
-        const safeName = name.replace(/'/g, "\\'");
-        const safeDesc = desc.replace(/'/g, "\\'").replace(/\n/g, "<br>");
-
-        return `
-            <div class="card" onclick="showPopup('${safeName}', '${price}', '${sizes}', '${img}', '${safeDesc}')">
-                <img src="${img}" alt="${name}" onerror="this.src='https://via.placeholder.com/300x400?text=No+Photo'">
-                <div class="card-info">
-                    <h3>${name}</h3>
-                    <div class="price">${price} грн</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-        }
-
-        grid.innerHTML = items.map(i => {
-            const name = i.Name || i.name || i['Назва'] || "Без назви";
+        grid.innerHTML = items.map((i, index) => {
+            const name = i.Name || i.name || i['Назва'] || "Товар";
             const price = i.Price || i.price || i['Ціна'] || "0";
             const img = i.ImageURL || i.image || i['Фото'] || "";
+            const desc = i.Description || i.description || i['Опис'] || "";
             const sizes = i.Sizes || i.size || i['Розміри'] || "Універсальний";
-            const desc = i.Description || i.description || i['Опис'] || i.Desc || "Опис очікується...";
-
-            // Підготовка даних для функції кліку (захист від лапок та переносів)
-            const safeName = name.replace(/'/g, "\\'");
-            const safeDesc = desc.replace(/'/g, "\\'").replace(/\n/g, "<br>");
 
             return `
-                <div class="card" onclick="showPopup('${safeName}', '${price}', '${sizes}', '${img}', '${safeDesc}')">
-                    <img src="${img}" alt="${name}" onerror="this.src='https://via.placeholder.com/380x500?text=No+Photo'">
+                <div class="card" onclick="openProduct('${encodeURIComponent(JSON.stringify(i))}')">
+                    <img src="${img}" alt="${name}">
                     <div class="card-info">
                         <h3>${name}</h3>
                         <div class="price">${price} грн</div>
@@ -227,64 +124,93 @@
         }).join('');
     }
 
-    // Фільтрація
-    function filterItems(category) {
-        if (category === 'Знижка') {
-            // Шукаємо товари, де ціна містить знижку або категорія "Знижка"
-            const discounted = allProducts.filter(p => 
-                (p.Category && p.Category.trim() === 'Знижка') || (p.oldPrice)
-            );
-            renderProducts(discounted);
-        } else {
-            const filtered = allProducts.filter(p => 
-                p.Category && p.Category.trim().toLowerCase() === category.trim().toLowerCase()
-            );
-            renderProducts(filtered);
-        }
-    }
+    function openProduct(encodedData) {
+        const product = JSON.parse(decodeURIComponent(encodedData));
+        currentProduct = product;
+        
+        document.getElementById('m-name').innerText = product.Name || product.name || product['Назва'];
+        document.getElementById('m-price').innerText = (product.Price || product.price || product['Ціна']) + " грн";
+        document.getElementById('m-img').src = product.ImageURL || product.image || product['Фото'];
+        
+        // Виправлення опису для телефонів
+        const descText = product.Description || product.description || product['Опис'] || "Опис відсутній";
+        document.getElementById('m-desc').innerHTML = descText.replace(/\n/g, '<br>');
 
-    // Відкриття вікна товару
-    function showPopup(name, price, sizes, img, desc) {
-        document.getElementById('m-name').innerText = name;
-        document.getElementById('m-price').innerText = price + " грн";
-        document.getElementById('m-desc').innerHTML = desc; 
-        document.getElementById('m-src').src = img;
-        
-        const sel = document.getElementById('m-size');
-        const sizeArray = sizes ? sizes.split(',') : ["Універсальний"];
-        sel.innerHTML = sizeArray.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
-        
-        document.getElementById('modal').style.display = 'flex';
+        const sizeSelect = document.getElementById('m-size');
+        const sizes = (product.Sizes || product.size || product['Розміри'] || "Універсальний").split(',');
+        sizeSelect.innerHTML = sizes.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
+
+        document.getElementById('productModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
     }
 
-    // Закриття вікна
-    function closeModal() {
-        document.getElementById('modal').style.display = 'none';
+    function searchProducts() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allProducts.filter(p => 
+            (p.Name || p.name || p['Назва'] || "").toLowerCase().includes(term)
+        );
+        renderProducts(filtered);
+    }
+
+    function filterItems(cat) {
+        const filtered = allProducts.filter(p => (p.Category || p['Категорія'] || "").trim() === cat);
+        renderProducts(filtered);
+    }
+
+    function addToCart() {
+        const size = document.getElementById('m-size').value;
+        cart.push({ ...currentProduct, selectedSize: size });
+        updateCartCount();
+        closeModal('productModal');
+        alert("Додано в кошик!");
+    }
+
+    function updateCartCount() {
+        document.getElementById('cartCount').innerText = cart.length;
+    }
+
+    function openCart() {
+        const list = document.getElementById('cartItems');
+        let total = 0;
+        list.innerHTML = cart.map((item, idx) => {
+            const p = item.Price || item.price || item['Ціна'] || 0;
+            total += parseInt(p);
+            return `
+                <div class="cart-item">
+                    <span>${item.Name || item.name} (${item.selectedSize})</span>
+                    <span>${p} грн <button onclick="removeFromCart(${idx})" style="color:red; background:none; border:none; cursor:pointer;">✕</button></span>
+                </div>
+            `;
+        }).join('');
+        document.getElementById('cartTotal').innerText = total;
+        document.getElementById('cartModal').style.display = 'flex';
+    }
+
+    function removeFromCart(idx) {
+        cart.splice(idx, 1);
+        updateCartCount();
+        openCart();
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
         document.body.style.overflow = 'auto';
     }
 
-    // Оформлення замовлення
-    function submitOrder() {
-        const phone = document.getElementById('m-phone').value;
-        const name = document.getElementById('m-name').innerText;
-        const size = document.getElementById('m-size').value;
-        const deliv = document.getElementById('m-delivery').value;
-
-        if(phone.trim().length < 10) {
-            alert("Будь ласка, введіть повний номер телефону для зв'язку.");
-            return;
-        }
+    function checkout() {
+        const phone = document.getElementById('userPhone').value;
+        if (phone.length < 10) return alert("Введіть коректний номер!");
         
-        const successMsg = `Дякуємо! Замовлення прийнято.\n\nТовар: ${name}\nРозмір: ${size}\nДоставка: ${deliv}\n\nМи зателефонуємо на номер ${phone} найближчим часом.`;
-        alert(successMsg);
-        closeModal();
+        const itemsList = cart.map(i => `${i.Name || i.name} (${i.selectedSize})`).join(', ');
+        alert(`Замовлення прийнято!\nТовари: ${itemsList}\nМи зателефонуємо вам на ${phone}`);
+        cart = [];
+        updateCartCount();
+        closeModal('cartModal');
     }
 
-    // Запуск при завантаженні сторінки
     window.onload = load;
 </script>
 </body>
-
 </html>
+
 
